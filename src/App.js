@@ -9,12 +9,19 @@ function App() {
   const [position, setPosition] = useState('');
   const [wage, setWage] = useState('');
   const [employeeList, setEmployeeList] = useState([]);
-  const [list, setList] = useState('')
+  const [list, setList] = useState('');
+  const [notice, setNotice] = useState('');
+  const [display, setDisplay] = useState(false);
 
 
 
   const createEmployee = async () => {
+
     try {
+      if (name === '' || age === '' || country === '' || position === '' || wage === '') {
+        setNotice('Please Fill All the Fields.');
+        return setDisplay(true);
+      }
       await axios.post('http://localhost:5000/createEmployee', {
         name: name,
         age: age,
@@ -29,6 +36,8 @@ function App() {
         setPosition('');
         setWage('');
         setAge('');
+        setNotice('');
+        setDisplay(false);
 
       }
 
@@ -54,9 +63,31 @@ function App() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+  const hideEmployee = () => {
+    setEmployeeList([]);
+    setList('');
+  }
+
+
+
+
+
   return (
     <div className="App">
       <h1>Basic Form</h1>
+      {display ?
+        <h4 className='notice'>{notice}</h4> : ''}
       <div className="form-container">
         <label htmlFor="name">Name:</label>
         <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
@@ -72,7 +103,11 @@ function App() {
       </div>
       <button className='btn' onClick={createEmployee}>Add Employee</button>
       <hr />
-      <button className="showbtn btn" onClick={showEmployee} >Show Employee</button>
+      <div className="btncontainer">
+        <button className="showbtn btn" onClick={showEmployee} >Show Employee</button>
+        <button className="hidebtn btn" onClick={hideEmployee}>Hide</button>
+      </div>
+
       <h1>{list}</h1>
       <div className="employeeList">
 
@@ -90,8 +125,10 @@ function App() {
                   <p>Role:{position}</p>
                   <p>Salary:{wage}</p>
                 </div>
-              </div>
 
+              </div>
+              <button className="editbtn">Edit</button>
+              <button className="deletebtn">Delete</button>
             </div>
           )
         })}
