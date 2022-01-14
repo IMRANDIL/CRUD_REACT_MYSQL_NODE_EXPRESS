@@ -50,7 +50,9 @@ function App() {
   const showEmployee = async () => {
     try {
       const data = await axios.get('http://localhost:5000/showEmployee');
+
       setEmployeeList(data.data.result);
+
       setList('~~Employees List~~')
     } catch (error) {
       console.log(error);
@@ -59,13 +61,10 @@ function App() {
   }
 
 
+  const findId = (e) => {
+    console.log(e.target.dataset.id);
 
-
-
-
-
-
-
+  }
 
 
 
@@ -117,18 +116,19 @@ function App() {
           return (
             <div className="item" key={index}>
               <div className="card">
-                <div className="container">
+                <div className="container"  >
                   <span>Id:{id}</span>
                   <h4>Name:<b>{name}</b></h4>
                   <p>Age:{age}</p>
                   <p>Country:{country}</p>
                   <p>Role:{position}</p>
                   <p>Salary:{wage}</p>
+                  <button className="editbtn" data-id={id} onClick={findId}>Edit</button>
+                  <button className="deletebtn">Delete</button>
                 </div>
 
               </div>
-              <button className="editbtn">Edit</button>
-              <button className="deletebtn">Delete</button>
+
             </div>
           )
         })}
