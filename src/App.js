@@ -12,8 +12,10 @@ function App() {
   const [list, setList] = useState('');
   const [notice, setNotice] = useState('');
   const [display, setDisplay] = useState(false);
+  const [displaybtn, setDisplayBtn] = useState(false);
+  const [upId, setId] = useState('');
 
-
+  //adding employee to the database....
 
   const createEmployee = async () => {
 
@@ -47,6 +49,9 @@ function App() {
 
   }
 
+
+  //show all the employee....
+
   const showEmployee = async () => {
     try {
       const data = await axios.get('http://localhost:5000/showEmployee');
@@ -59,15 +64,70 @@ function App() {
     }
 
   }
+  //populating input field....
+
+  const fillInput = async (e) => {
+    try {
+      const Id = parseInt(e.target.dataset.id);
+      const data = await axios.get(`http://localhost:5000/showEmployee/${Id}`);
+      const { id, name, age, country, position, wage } = data.data[0];
+      setDisplayBtn(true);
+      setId(id);
+      setName(name);
+      setWage(wage);
+      setPosition(position);
+      setAge(age);
+      setCountry(country);
+      setEmployeeList([]);
+      setList('');
+    } catch (error) {
+      console.log(error);
+    }
 
 
-  const findId = (e) => {
-    console.log(e.target.dataset.id);
 
   }
 
 
+  //update.......
 
+
+  const updateEmployee = async () => {
+    try {
+
+      if (name === '' || age === '' || country === '' || position === '' || wage === '') {
+        setNotice('Please Fill All the Fields.');
+        return setDisplay(true);
+      }
+
+      const Id = upId;
+      await axios.put(`http://localhost:5000/updateEmployee/${Id}`, {
+        name: name,
+        age: age,
+        country: country,
+        position: position,
+        wage: wage
+      });
+
+      if ({ status: 200 }) {
+        setCountry('');
+        setName('');
+        setPosition('');
+        setWage('');
+        setAge('');
+        setNotice('');
+        setDisplayBtn(false);
+        setDisplay(false);
+
+      }
+
+
+    } catch (error) {
+      console.log(error);
+    }
+
+
+  }
 
 
 
@@ -100,7 +160,10 @@ function App() {
         <input type="number" value={wage} onChange={(e) => setWage(e.target.value)} />
 
       </div>
-      <button className='btn' onClick={createEmployee}>Add Employee</button>
+      {displaybtn ?
+        '' : <button className='btn' onClick={createEmployee}>Add Employee</button>}
+      {displaybtn ?
+        <button className='btn' onClick={updateEmployee}>Update Employee</button> : ''}
       <hr />
       <div className="btncontainer">
         <button className="showbtn btn" onClick={showEmployee} >Show Employee</button>
@@ -123,8 +186,8 @@ function App() {
                   <p>Country:{country}</p>
                   <p>Role:{position}</p>
                   <p>Salary:{wage}</p>
-                  <button className="editbtn" data-id={id} onClick={findId}>Edit</button>
-                  <button className="deletebtn">Delete</button>
+                  <button className="editbtn" data-id={id} onClick={fillInput}>Edit</button>
+                  <button className="deletebtn" data-id={id}>Delete</button>
                 </div>
 
               </div>
