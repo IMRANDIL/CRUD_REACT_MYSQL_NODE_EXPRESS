@@ -14,6 +14,11 @@ function App() {
   const [display, setDisplay] = useState(false);
   const [displaybtn, setDisplayBtn] = useState(false);
   const [upId, setId] = useState('');
+  const [empty, setEmpty] = useState('');
+
+
+
+
 
   //adding employee to the database....
 
@@ -40,7 +45,7 @@ function App() {
         setAge('');
         setNotice('');
         setDisplay(false);
-
+        showEmployee();
       }
 
     } catch (error) {
@@ -58,7 +63,10 @@ function App() {
 
       setEmployeeList(data.data.result);
 
-      setList('~~Employees List~~')
+      setList('~~Employees List~~');
+      if (employeeList.length === 0) {
+        setEmpty(`~~Employees List Empty~~`)
+      }
     } catch (error) {
       console.log(error);
     }
@@ -80,6 +88,7 @@ function App() {
       setCountry(country);
       setEmployeeList([]);
       setList('');
+      setEmpty('');
     } catch (error) {
       console.log(error);
     }
@@ -119,6 +128,7 @@ function App() {
         setDisplayBtn(false);
         setDisplay(false);
 
+
       }
 
 
@@ -131,11 +141,38 @@ function App() {
 
 
 
+  //delete employee...
+
+  const deleteEmployee = async (e) => {
+    try {
+      const id = parseInt(e.target.dataset.id);
+      await axios.delete(`http://localhost:5000/deleteEmployee/${id}`);
+      if (employeeList.length === 0) {
+        setEmpty(`~~Employees List Empty~~`)
+      }
+      showEmployee()
+
+    } catch (error) {
+      console.log(error);
+    }
+
+
+  }
+
+
+
+
+
+
+
+
+
 
 
   const hideEmployee = () => {
     setEmployeeList([]);
     setList('');
+    setEmpty('');
   }
 
 
@@ -169,8 +206,8 @@ function App() {
         <button className="showbtn btn" onClick={showEmployee} >Show Employee</button>
         <button className="hidebtn btn" onClick={hideEmployee}>Hide</button>
       </div>
+      {employeeList.length === 0 ? <h1>{empty}</h1> : <h1>{list}</h1>}
 
-      <h1>{list}</h1>
       <div className="employeeList">
 
         {employeeList.map((list, index) => {
@@ -187,7 +224,7 @@ function App() {
                   <p>Role:{position}</p>
                   <p>Salary:{wage}</p>
                   <button className="editbtn" data-id={id} onClick={fillInput}>Edit</button>
-                  <button className="deletebtn" data-id={id}>Delete</button>
+                  <button className="deletebtn" data-id={id} onClick={deleteEmployee}>Delete</button>
                 </div>
 
               </div>
